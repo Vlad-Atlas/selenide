@@ -7,12 +7,14 @@ import java.time.Duration;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 
+import static com.codeborne.selenide.Selectors.withText;
+
 import static com.codeborne.selenide.Selenide.*;
 
 
 class CardDeliveryTest {
 
-    private String generateDate(int addDays) {
+    private String generateDate(int addDays, String s) {
         return LocalDate.now().plusDays(addDays).format(DateTimeFormatter.ofPattern("dd.MM.yyyy"));
     }
 
@@ -23,14 +25,15 @@ class CardDeliveryTest {
 
         $("[data-test-id=city] input").setValue("Москва");
         $("[data-test-id=date] input").clear();
-        $("[data-test-id=date] input").setValue(generateDate(3));
+        $("[data-test-id=date] input").setValue(generateDate(3, "dd.MM.yyyy"));
         $("[data-test-id=name] input").setValue("Иванов Иван");
         $("[data-test-id=phone] input").setValue("+79991234567");
         $("[data-test-id=agreement]").click();
-        $$("button").findBy(Condition.text("Забронировать")).click();
-        $(".loading-indicator").shouldBe(Condition.visible, Duration.ofSeconds(15));
+        $$("button").find(Condition.exactText("Забронировать")).click();
+        $(withText("Успешно!")).shouldBe(Condition.hidden, Duration.ofSeconds(15));
+        $(withText("Встреча успешно забронирована")).shouldBe(Condition.hidden, Duration.ofSeconds(15));
         $("[data-test-id=notification]").shouldBe(Condition.visible, Duration.ofSeconds(15));
-        String expectedMessage = "Успешно! Встреча успешно забронирована на " + generateDate(3);
-        $("[data-test-id=notification]").shouldHave(Condition.text(expectedMessage));
+        $("[data-test-id=notification]").shouldHave(Condition.text("Успешно!\n" +
+                "Встреча успешно забронирована на " + generateDate(3, "dd.MM.yyyy"))).shouldBe(Condition.visible);
     }
 }
