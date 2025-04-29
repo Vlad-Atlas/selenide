@@ -19,13 +19,12 @@ class CardDeliveryTest {
     }
 
     @Test
-    void shouldSubmitCardDeliveryFormSuccessfully() {
+    void shouldCardDeliveryTest() {
         open("http://localhost:9999");
 
-
         $("[data-test-id=city] input").setValue("Москва");
-        $("[data-test-id=date] input").clear();
-        $("[data-test-id=date] input").setValue(generateDate(3, "dd.MM.yyyy"));
+        $("[data-test-id=date] input").doubleClick();
+        $("[data-test-id=date] input").setValue(generateDate(4, "dd.MM.yyyy"));
         $("[data-test-id=name] input").setValue("Иванов Иван");
         $("[data-test-id=phone] input").setValue("+79991234567");
         $("[data-test-id=agreement]").click();
@@ -34,7 +33,7 @@ class CardDeliveryTest {
         $(withText("Встреча успешно забронирована")).shouldBe(Condition.hidden, Duration.ofSeconds(15));
         $("[data-test-id=notification]").shouldBe(Condition.visible, Duration.ofSeconds(15));
         $("[data-test-id=notification]").shouldHave(Condition.text("Успешно!\n" +
-                "Встреча успешно забронирована на " + generateDate(3, "dd.MM.yyyy"))).shouldBe(Condition.visible);
+                "Встреча успешно забронирована на " + generateDate(4, "dd.MM.yyyy"))).shouldBe(Condition.visible);
 
     }
 }
